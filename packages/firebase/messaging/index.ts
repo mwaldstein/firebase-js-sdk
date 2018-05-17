@@ -14,4 +14,29 @@
  * limitations under the License.
  */
 
-import '@firebase/messaging';
+import firebase from '@firebase/app';
+import { _FirebaseNamespace } from '@firebase/app-types/private';
+
+import { isSupported, messaging } from '@firebase/messaging';
+import { FirebaseMessaging } from '@firebase/messaging-types';
+
+const messagingName = 'messaging';
+const namespaceExports = { isSupported };
+
+(firebase as _FirebaseNamespace).INTERNAL.registerService(
+  messagingName,
+  messaging,
+  namespaceExports
+);
+
+declare module '@firebase/app-types' {
+  interface FirebaseNamespace {
+    messaging: {
+      (app?: FirebaseApp): FirebaseMessaging;
+      isSupported(): boolean;
+    };
+  }
+  interface FirebaseApp {
+    messaging(): FirebaseMessaging;
+  }
+}
